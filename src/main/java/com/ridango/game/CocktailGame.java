@@ -1,6 +1,7 @@
 package com.ridango.game;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -53,7 +54,7 @@ public class CocktailGame {
                 return true;
             } else {
                 attemptsLeft--;
-                hiddenName = revealLetters(cocktailName, hiddenName);
+                hiddenName = revealLetter(cocktailName, hiddenName);
                 System.out.println("Wrong! Here's a hint: " + hiddenName);
                 System.out.println("Category: " + cocktail.getCategory());
                 System.out.println("Glass: " + cocktail.getGlass());
@@ -65,14 +66,37 @@ public class CocktailGame {
         return false;
     }
 
-    private String revealLetters(String cocktailName, String hiddenName) {
+    private String revealLetter(String cocktailName, String hiddenName) {
         char[] hiddenArray = hiddenName.toCharArray();
-        for (int i = 0; i < cocktailName.length(); i++) {
-            if (hiddenArray[i] == '_') {
-                hiddenArray[i] = cocktailName.charAt(i);
+
+        if (!hasHiddenLetter(hiddenArray)) {
+            return hiddenName;
+        }
+
+        unhideRandomLetter(cocktailName, hiddenArray);
+
+        return new String(hiddenArray);
+    }
+
+    private static boolean hasHiddenLetter(char[] hiddenArray) {
+        boolean hasHiddenLetter = false;
+        for (char c : hiddenArray) {
+            if (c == '_') {
+                hasHiddenLetter = true;
                 break;
             }
         }
-        return new String(hiddenArray);
+        return hasHiddenLetter;
+    }
+
+    private static void unhideRandomLetter(String cocktailName, char[] hiddenArray) {
+        Random random = new Random();
+        int index;
+
+        do {
+            index = random.nextInt(cocktailName.length());
+        } while (hiddenArray[index] != '_');
+
+        hiddenArray[index] = cocktailName.charAt(index);
     }
 }
