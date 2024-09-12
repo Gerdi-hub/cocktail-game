@@ -20,17 +20,12 @@ public class RandomHintUtil {
 
             if (!usedHints.contains(hintType)) {
                 usedHints.add(hintType);
-                switch (hintType) {
-                    case "Category":
-                        hint = "Category: " + cocktail.getCategory();
-                        break;
-                    case "Glass":
-                        hint = "Glass: " + cocktail.getGlass();
-                        break;
-                    case "Ingredients":
-                        hint = "Ingredients: " + cocktail.getIngredients();
-                        break;
-                }
+                hint = switch (hintType) {
+                    case "Category" -> "Category: " + cocktail.getCategory();
+                    case "Glass" -> "Glass: " + cocktail.getGlass();
+                    case "Ingredients" -> "Ingredients: " + cocktail.getIngredients();
+                    default -> hint;
+                };
                 break;
             }
         }
