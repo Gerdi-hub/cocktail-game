@@ -1,22 +1,22 @@
 package com.ridango.game;
 
+import lombok.RequiredArgsConstructor;
+
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
+import static com.ridango.game.LetterRevealUtil.revealLetters;
+import static com.ridango.game.RandomHintUtil.getRandomHint;
+
+@RequiredArgsConstructor
 public class CocktailGame {
     private final CocktailService cocktailService;
-    private final Scanner scanner;
-    private int score;
-    private Set<Long> usedCocktails;
+    private final Scanner scanner = new Scanner(System.in);
 
-    public CocktailGame(CocktailService cocktailService) {
-        this.cocktailService = cocktailService;
-        this.scanner = new Scanner(System.in);
-        this.score = 0;
-        this.usedCocktails = new HashSet<>();
-    }
+    private int score = 0;
+    private final Set<Long> usedCocktails = new HashSet<>();
+    private final Set<String> usedHints = new HashSet<>();
 
     public void startGame() {
         System.out.println("Welcome to the Guess the Cocktail game!");
@@ -30,15 +30,16 @@ public class CocktailGame {
     }
 
     private boolean playRound() {
-        Cocktail cocktail = cocktailService.getRandomCocktail();
-        while (usedCocktails.contains(cocktail.getId())) {
-            cocktail = cocktailService.getRandomCocktail();
-        }
+        Cocktail cocktail = getRandomCocktail();
+
         usedCocktails.add(cocktail.getId());
 
         String cocktailName = cocktail.getName();
         String hiddenName = "_".repeat(cocktailName.length());
         int attemptsLeft = 5;
+
+        // TODO remove for playing, testing only
+        System.out.println(cocktailName);
 
         System.out.println("Instructions: " + cocktail.getInstructions());
         System.out.println("Guess the cocktail: " + hiddenName);
@@ -54,11 +55,9 @@ public class CocktailGame {
                 return true;
             } else {
                 attemptsLeft--;
-                hiddenName = revealLetter(cocktailName, hiddenName);
+                hiddenName = revealLetters(cocktailName, hiddenName);
                 System.out.println("Wrong! Here's a hint: " + hiddenName);
-                System.out.println("Category: " + cocktail.getCategory());
-                System.out.println("Glass: " + cocktail.getGlass());
-                System.out.println("Ingredients: " + cocktail.getIngredients());
+                System.out.println(getRandomHint(cocktail, usedHints));
             }
         }
 
@@ -66,37 +65,20 @@ public class CocktailGame {
         return false;
     }
 
-    private String revealLetter(String cocktailName, String hiddenName) {
-        char[] hiddenArray = hiddenName.toCharArray();
-
-        if (!hasHiddenLetter(hiddenArray)) {
-            return hiddenName;
-        }
-
-        unhideRandomLetter(cocktailName, hiddenArray);
-
-        return new String(hiddenArray);
-    }
-
-    private static boolean hasHiddenLetter(char[] hiddenArray) {
-        boolean hasHiddenLetter = false;
-        for (char c : hiddenArray) {
-            if (c == '_') {
-                hasHiddenLetter = true;
-                break;
-            }
-        }
-        return hasHiddenLetter;
-    }
-
-    private static void unhideRandomLetter(String cocktailName, char[] hiddenArray) {
-        Random random = new Random();
-        int index;
+    private Cocktail getRandomCocktail() {
+        Cocktail cocktail;
+        int maxTries = 10; // Set the maximum number of tries
+        int attempts = 0;
 
         do {
-            index = random.nextInt(cocktailName.length());
-        } while (hiddenArray[index] != '_');
+            cocktail = cocktailService.getRandomCocktail();
+            attempts++;
+        } while (usedCocktails.contains(cocktail.getId()) && attempts < maxTries);
 
-        hiddenArray[index] = cocktailName.charAt(index);
+        if (attempts == maxTries) {
+            throw new RuntimeException("Failed to get a unique cocktail after " + maxTries + " attempts.");
+        } else return cocktail;
     }
+
+
 }
