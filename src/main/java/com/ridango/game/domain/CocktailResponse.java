@@ -1,6 +1,7 @@
-package com.ridango.game;
+package com.ridango.game.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ridango.game.dto.CocktailDto;
 import lombok.Data;
 
 import java.util.List;

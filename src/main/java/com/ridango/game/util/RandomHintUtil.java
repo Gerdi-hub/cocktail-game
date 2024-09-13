@@ -1,5 +1,6 @@
-package com.ridango.game;
+package com.ridango.game.util;
 
+import com.ridango.game.domain.Cocktail;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Random;
@@ -9,7 +10,7 @@ import java.util.Set;
 public class RandomHintUtil {
 
 
-    public static String getRandomHint(Cocktail cocktail, Set<String> usedHints) {
+    public static String getRandomExtraHint(Cocktail cocktail, Set<String> usedHints) {
         String[] hintTypes = {"Category", "Glass", "Ingredients"};
         String hint = null;
         Random random = new Random();
@@ -26,8 +27,11 @@ public class RandomHintUtil {
                     case "Ingredients" -> "Ingredients: " + cocktail.getIngredients();
                     default -> hint;
                 };
+            }
+            if (hint != null && !hint.endsWith("null")) {
                 break;
             }
+
         }
         return hint;
     }

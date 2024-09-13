@@ -1,4 +1,4 @@
-package com.ridango.game;
+package com.ridango.game.domain;
 
 import lombok.Builder;
 import lombok.Data;

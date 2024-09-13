@@ -1,22 +1,22 @@
 package com.ridango.game;
 
+import com.ridango.game.domain.Cocktail;
+import com.ridango.game.service.CocktailService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
-import static com.ridango.game.LetterRevealUtil.revealLetters;
-import static com.ridango.game.RandomHintUtil.getRandomHint;
+import static com.ridango.game.util.LetterRevealUtil.revealLetters;
+import static com.ridango.game.util.RandomHintUtil.getRandomExtraHint;
 
 @RequiredArgsConstructor
 public class CocktailGame {
     private final CocktailService cocktailService;
     private final Scanner scanner = new Scanner(System.in);
-
     private int score = 0;
     private final Set<Long> usedCocktails = new HashSet<>();
-    private final Set<String> usedHints = new HashSet<>();
 
     public void startGame() {
         System.out.println("Welcome to the Guess the Cocktail game!");
@@ -30,19 +30,18 @@ public class CocktailGame {
     }
 
     private boolean playRound() {
-        Cocktail cocktail = getRandomCocktail();
-
+        Cocktail cocktail = cocktailService.getRandomUnusedCocktail(usedCocktails);
         usedCocktails.add(cocktail.getId());
 
         String cocktailName = cocktail.getName();
         String hiddenName = "_".repeat(cocktailName.length());
+        final Set<String> usedHints = new HashSet<>();
         int attemptsLeft = 5;
 
         // TODO remove for playing, testing only
         System.out.println(cocktailName);
 
-        System.out.println("Instructions: " + cocktail.getInstructions());
-        System.out.println("Guess the cocktail: " + hiddenName);
+        printRoundIntro(cocktail.getInstructions(), hiddenName);
 
         while (attemptsLeft > 0) {
             System.out.println("Attempts left: " + attemptsLeft);
@@ -50,14 +49,13 @@ public class CocktailGame {
             String guess = scanner.nextLine();
 
             if (guess.equalsIgnoreCase(cocktailName)) {
-                score += attemptsLeft;
-                System.out.println("Correct! Your score is now: " + score);
-                return true;
+                return handleCorrectGuess(attemptsLeft);
             } else {
                 attemptsLeft--;
                 hiddenName = revealLetters(cocktailName, hiddenName);
                 System.out.println("Wrong! Here's a hint: " + hiddenName);
-                System.out.println(getRandomHint(cocktail, usedHints));
+
+                printRandomExtraHintIfAvailable(cocktail, usedHints);
             }
         }
 
@@ -65,19 +63,22 @@ public class CocktailGame {
         return false;
     }
 
-    private Cocktail getRandomCocktail() {
-        Cocktail cocktail;
-        int maxTries = 10; // Set the maximum number of tries
-        int attempts = 0;
+    private static void printRandomExtraHintIfAvailable(Cocktail cocktail, Set<String> usedHints) {
+        String hint = getRandomExtraHint(cocktail, usedHints);
+        if (hint != null) {
+            System.out.println(hint);
+        }
+    }
 
-        do {
-            cocktail = cocktailService.getRandomCocktail();
-            attempts++;
-        } while (usedCocktails.contains(cocktail.getId()) && attempts < maxTries);
+    private boolean handleCorrectGuess(int attemptsLeft) {
+        score += attemptsLeft;
+        System.out.println("Correct! Your score is now: " + score);
+        return true;
+    }
 
-        if (attempts == maxTries) {
-            throw new RuntimeException("Failed to get a unique cocktail after " + maxTries + " attempts.");
-        } else return cocktail;
+    private static void printRoundIntro(String instructions, String hiddenName) {
+        System.out.println("Instructions: " + instructions);
+        System.out.println("Guess the cocktail: " + hiddenName);
     }
 
 
