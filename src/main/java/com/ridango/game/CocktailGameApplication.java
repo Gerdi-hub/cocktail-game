@@ -1,25 +1,24 @@
 package com.ridango.game;
 
-import com.ridango.game.service.CocktailService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
+@RequiredArgsConstructor
 public class CocktailGameApplication implements CommandLineRunner {
 
-	@Autowired
-    CocktailService cocktailService;
+
+    private final CocktailGame cocktailGame;
 
     public static void main(String[] args) {
 		SpringApplication.run(CocktailGameApplication.class, args);
 	}
 
 	@Override public void run(String... args) throws Exception {
-		CocktailGame game = new CocktailGame(cocktailService);
-		game.startGame();
+		cocktailGame.playGame();
 	}
 
 }
