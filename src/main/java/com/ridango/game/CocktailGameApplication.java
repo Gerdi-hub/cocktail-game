@@ -5,7 +5,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-
 @SpringBootApplication
 @RequiredArgsConstructor
 public class CocktailGameApplication implements CommandLineRunner {
@@ -17,7 +16,7 @@ public class CocktailGameApplication implements CommandLineRunner {
 		SpringApplication.run(CocktailGameApplication.class, args);
 	}
 
-	@Override public void run(String... args) throws Exception {
+	@Override public void run(String... args) {
 		cocktailGame.playGame();
 	}
 
