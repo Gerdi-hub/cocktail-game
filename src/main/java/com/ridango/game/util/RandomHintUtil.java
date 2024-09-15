@@ -9,7 +9,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class RandomHintUtil {
 
-
     public static String getRandomExtraHint(Cocktail cocktail, Set<String> usedHints) {
         String[] hintTypes = {"Category", "Glass", "Ingredients"};
         String hint = null;

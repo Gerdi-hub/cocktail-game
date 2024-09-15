@@ -21,7 +21,7 @@ public class CocktailGame {
     private final CocktailService cocktailService;
     private final HighScoreRepository highScoreRepository;
     private final Scanner scanner = new Scanner(System.in);
-    private int score = 0;
+    private int score;
     private final Set<Long> usedCocktails = new HashSet<>();
     private String playerName;
 
@@ -29,6 +29,7 @@ public class CocktailGame {
     public void playGame() {
         boolean playNewGame = true;
         while (playNewGame) {
+            score = 0;
             System.out.println("Welcome to the Guess the Cocktail game!");
             System.out.print("Please enter your name: ");
             playerName = scanner.nextLine();
@@ -72,9 +73,10 @@ public class CocktailGame {
                 return handleCorrectGuess(attemptsLeft);
             } else {
                 attemptsLeft--;
+            }
+            if (attemptsLeft > 0) {
                 hiddenName = revealLetters(cocktailName, hiddenName);
                 System.out.println("Wrong! Here's a hint: " + hiddenName);
-
                 printRandomExtraHintIfAvailable(cocktail, usedHints);
             }
         }

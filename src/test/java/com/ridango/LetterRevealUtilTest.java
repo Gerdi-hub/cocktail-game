@@ -9,8 +9,8 @@ public class LetterRevealUtilTest {
 
     @Test
     void testRevealLettersWithNoHiddenLetters() {
-        String cocktailName = "Tom Collins";
-        String hiddenName = "Tom Collins";
+        String cocktailName = "B5";
+        String hiddenName = "B5";
 
         String result = LetterRevealUtil.revealLetters(cocktailName, hiddenName);
 
@@ -41,11 +41,16 @@ public class LetterRevealUtilTest {
     }
 
     private boolean hasMatchingLetter(String input, String output) {
-        for (char c : input.toCharArray()) {
-            if (output.indexOf(c) >= 0) {
+        if (input.length() != output.length()) {
+            return false;
+        }
+
+        for (int i = 0; i < input.length(); i++) {
+            if (input.charAt(i) == output.charAt(i)) {
                 return true;
             }
         }
+
         return false;
     }
 }
