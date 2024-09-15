@@ -18,6 +18,7 @@ public class CocktailGameApplication implements CommandLineRunner {
 
 	@Override public void run(String... args) {
 		cocktailGame.playGame();
+        System.exit(0);
 	}
 
 }

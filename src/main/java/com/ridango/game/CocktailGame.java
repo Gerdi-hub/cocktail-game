@@ -27,18 +27,26 @@ public class CocktailGame {
 
 
     public void playGame() {
-        System.out.println("Welcome to the Guess the Cocktail game!");
-        System.out.print("Please enter your name: ");
-        playerName = scanner.nextLine();
+        boolean playNewGame = true;
+        while (playNewGame) {
+            System.out.println("Welcome to the Guess the Cocktail game!");
+            System.out.print("Please enter your name: ");
+            playerName = scanner.nextLine();
 
-        boolean continuePlaying = true;
-        while (continuePlaying) {
-            continuePlaying = playRound();
+            boolean isGameOngoing = true;
+            while (isGameOngoing) {
+                isGameOngoing = playRound();
+            }
+
+            System.out.println("Game over! Your final score is: " + score);
+            saveHighScore();
+            printTopHighScores();
+
+            System.out.print("Do you want to play again? (yes/no): ");
+            String response = scanner.nextLine();
+            playNewGame = response.equalsIgnoreCase("yes");
         }
-
-        System.out.println("Game over! Your final score is: " + score);
-        saveHighScore();
-        printTopHighScores();
+        System.out.println("BYE");
     }
 
     private boolean playRound() {
