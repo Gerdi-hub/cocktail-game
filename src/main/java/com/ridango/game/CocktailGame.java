@@ -60,7 +60,7 @@ public class CocktailGame {
         int attemptsLeft = 5;
 
         // TODO remove for playing, testing only
-        System.out.println(cocktailName);
+//        System.out.println(cocktailName);
 
         printRoundIntro(cocktail.getInstructions(), hiddenName);
 
